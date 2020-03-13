@@ -103,3 +103,30 @@ func (t mybooks) UpdateBooks(form *model.Updatebook) error {
 	}
 	return nil
 }
+func (t mybooks) SaveApply(apply *model.Apply) error {
+	apply.BeforeInsert()
+	applys := &[]model.Apply{}
+	if err := cs.Sql.Where("library_id=? and user_id=?", apply.LibraryId, apply.UserId).Find(applys); err != nil {
+	}
+	if len(*applys) <= 0 {
+		//发送短信验证码
+		if _, err := cs.Sql.Insert(apply); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func (t mybooks) ApplyLibrary(id int64, librarys *[]model.Library) error {
+	cs.Sql.ShowSQL(true)
+	if _, err := cs.Sql.FindAndCount(librarys); err != nil {
+		return err
+	}
+	for i := 0; i < len(*librarys); i++ {
+		apply := &model.Apply{}
+		if _, err := cs.Sql.Where("user_id=? and library_id=?", id, (*librarys)[i].ID).Get(apply); err != nil {
+
+		}
+		(*librarys)[i].Apply = *apply
+	}
+	return nil
+}

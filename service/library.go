@@ -27,7 +27,6 @@ func (library) List(form *model.Library, page *model.Page, list *[]model.Library
 	} else {
 		page = page.GetPager(cnt)
 	}
-
 	return nil
 }
 

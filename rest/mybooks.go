@@ -92,6 +92,37 @@ func (mybooks) updatebook(c *gin.Context) {
 	r["data"] = "ok"
 	c.JSON(200, r)
 }
+func (mybooks) applySave(c *gin.Context) {
+	apply := &model.Apply{}
+	if err := c.Bind(apply); err != nil {
+		c.String(400, "id 参数错误")
+		c.Abort()
+		return
+	}
+	if err := service.Mybooks.SaveApply(apply); err != nil {
+		c.String(500, "id 参数错误")
+		c.Abort()
+		return
+	}
+	c.JSON(200, "ok")
+}
+func (mybooks) applylibrary(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.String(400, "id 参数错误")
+		c.Abort()
+		return
+	}
+	librarys := &[]model.Library{}
+	if err := service.Mybooks.ApplyLibrary(id, librarys); err != nil {
+		c.String(500, "id 参数错误")
+		c.Abort()
+		return
+	}
+	r := map[string]interface{}{}
+	r["data"] = librarys
+	c.JSON(200, r)
+}
 func (mybooks) Register(r *gin.RouterGroup) {
 	r.POST("/v1/mybooks/update", Mybooks.updatebook)
 	r.GET("/v1/mybooks", Mybooks.list)
@@ -99,4 +130,6 @@ func (mybooks) Register(r *gin.RouterGroup) {
 	r.PUT("/v1/mybooks/:id", Mybooks.put)
 	r.DELETE("/v1/mybooks/:id", Mybooks.delete)
 	r.POST("/v1/mybooks", Mybooks.save)
+	r.POST("/v1/apply", Mybooks.applySave)
+	r.GET("/v1/applylibrary/:id", Mybooks.applylibrary)
 }

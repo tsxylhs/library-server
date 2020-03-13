@@ -53,8 +53,7 @@ func (t notes) Delete(form *model.Notes) error {
 
 // Receive 保存记录
 func (t notes) Save(form *model.Notes) error {
-	if form.ID == 0 {
-	}
+	form.BeforeInsert()
 	if _, err := cs.Sql.Insert(form); err != nil {
 		return err
 	}

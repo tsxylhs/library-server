@@ -15,6 +15,16 @@ type Base struct {
 	CreatedAt time.Time `xorm:"created" json:"createdAt"`
 	DeletedAt time.Time `xorm:"deleted" json:"-"`
 }
+type Apply struct {
+	Base      `xorm:"extends"`
+	Num       string `json:"num"`
+	Name      string `json:"name"`
+	Class     string `json:"class"`
+	School    string `json:"school"`
+	Phone     string `json:"phone"`
+	LibraryId int64  `json:"libraryId,string"`
+	UserId    int64  `json:"userId,string"`
+}
 type MyBook struct {
 	Base       `xorm:"extends"`
 	Status     int     `json:"status,string" form:"status,string"`
@@ -64,6 +74,7 @@ type Library struct {
 	Lng     string `json:"lng" from:"lng"`
 	Address string `json:"address" from:"address"`
 	Image   string `json:"image" form:"image"`
+	Apply   Apply  `xorm:"-" json:"apply"`
 }
 type Books struct {
 	Base `xorm:"extends"`
@@ -99,10 +110,13 @@ type Message struct {
 	Message   string
 }
 type Notes struct {
-	Base   `xorm:"extends"`
-	Title  string
-	BookId int64
-	Notes  string
+	Base       `xorm:"extends"`
+	Title      string
+	BookId     int64
+	BookName   string `json:"bookName" form:"bookName"`
+	BookAuthor string `json:"bookAuthor" form:"bookAuthor"`
+	Desc       string `json:"desc" form:"desc"`
+	Notes      string
 }
 
 func NewBD() {
@@ -114,6 +128,7 @@ func NewBD() {
 		new(Message),
 		new(Books),
 		new(MyBook),
+		new(Apply),
 		new(Notes)); err != nil {
 		fmt.Print("初始化失败", err)
 	}
