@@ -13,13 +13,22 @@ type notes int
 var Notes notes
 
 func (notes) list(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	userId, err := strconv.ParseInt(c.Query("userId"), 10, 64)
 	if err != nil {
 		c.String(400, "id 参数错误")
 		c.Abort()
 		return
 	}
-	fmt.Print(id)
+	page := &model.Page{}
+	list := &[]model.Notes{}
+	if err := service.Notes.List(userId, page, list); err != nil {
+		c.String(500, "id 参数错误")
+		c.Abort()
+		return
+	}
+	r := map[string]interface{}{}
+	r["data"] = list
+	c.JSON(200, r)
 
 }
 func (notes) get(c *gin.Context) {
@@ -29,16 +38,29 @@ func (notes) get(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	fmt.Print(id)
-}
-func (notes) put(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	if err != nil {
-		c.String(400, "id 参数错误")
+
+	form := &model.Notes{}
+	form.ID = id
+	if err := service.Notes.Get(form); err != nil {
+		c.String(500, "id 参数错误")
 		c.Abort()
 		return
 	}
-	fmt.Print(id)
+	c.JSON(200, form)
+}
+func (notes) put(c *gin.Context) {
+	form := &model.Notes{}
+	if err := c.Bind(form); err != nil {
+		c.String(500, "错误")
+		c.Abort()
+		return
+	}
+	if err := service.Notes.Update(form); err != nil {
+		c.String(500, "错误")
+		c.Abort()
+		return
+	}
+	c.JSON(200, "ok")
 }
 func (notes) delete(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -49,7 +71,7 @@ func (notes) delete(c *gin.Context) {
 		return
 	}
 	fmt.Print(id)
-
+	c.JSON(200, "ok")
 }
 func (notes) save(c *gin.Context) {
 	notes := &model.Notes{}
@@ -66,7 +88,7 @@ func (notes) save(c *gin.Context) {
 	c.JSON(200, "ok")
 }
 func (notes) Register(r *gin.RouterGroup) {
-	r.GET("/v1/notes/:id/list", Notes.list)
+	r.GET("/v1/notes", Notes.list)
 	r.GET("/v1/notes/:id", Notes.get)
 	r.PUT("/v1/notes/:id", Notes.put)
 	r.DELETE("/v1/notes/:id", Notes.delete)

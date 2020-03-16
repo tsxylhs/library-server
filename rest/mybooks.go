@@ -69,7 +69,14 @@ func (mybooks) delete(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	fmt.Print(id)
+	form := &model.MyBook{}
+	form.ID = id
+	if err := service.Mybooks.Delete(form); err != nil {
+		c.String(500, "id 参数错误")
+		c.Abort()
+		return
+	}
+	c.JSON(200, form)
 
 }
 func (mybooks) save(c *gin.Context) {

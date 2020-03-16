@@ -111,12 +111,13 @@ type Message struct {
 }
 type Notes struct {
 	Base       `xorm:"extends"`
-	Title      string
-	BookId     int64
+	Title      string `json:"title"`
+	BookId     int64  `json:"bookId"`
 	BookName   string `json:"bookName" form:"bookName"`
 	BookAuthor string `json:"bookAuthor" form:"bookAuthor"`
 	Desc       string `json:"desc" form:"desc"`
 	Notes      string
+	UserId     int64 `json:"userId,string" form:"userId,string"`
 }
 
 func NewBD() {

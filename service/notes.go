@@ -19,9 +19,9 @@ func (notes) Get(form *model.Notes) error {
 }
 
 // list 获取多个项目列表
-func (notes) List(form *model.Notes, page *model.Page, list *[]model.Notes) error {
+func (notes) List(userId int64, page *model.Page, list *[]model.Notes) error {
 	// 分页查询
-	if cnt, err := cs.Sql.Limit(page.Limit(), page.Skip()).Desc("status", "created_at").FindAndCount(list, form); err != nil {
+	if cnt, err := cs.Sql.Where("user_id=?", userId).Desc("created_at").FindAndCount(list); err != nil {
 		return err
 	} else {
 		page = page.GetPager(cnt)
@@ -32,7 +32,7 @@ func (notes) List(form *model.Notes, page *model.Page, list *[]model.Notes) erro
 
 // Update 更新新的纪录
 func (notes) Update(form *model.Notes) error {
-	if _, err := cs.Sql.Update(form, form); err != nil {
+	if _, err := cs.Sql.ID(form.ID).Update(form); err != nil {
 
 		return err
 	}
