@@ -19,13 +19,21 @@ func (mybooks) Get(form *model.MyBook) error {
 }
 
 // list 获取多个项目列表
-func (mybooks) List(id int64, page *model.Page, list *[]model.MyBook) error {
+func (mybooks) List(isqueue string, id int64, page *model.Page, list *[]model.MyBook) error {
 	// 分页查询
 	cs.Sql.ShowSQL(true)
-	if cnt, err := cs.Sql.Limit(page.Limit(), page.Skip()).Where("user_id=?", id).Desc("created_at").FindAndCount(list); err != nil {
-		return err
+	if isqueue != "true" {
+		if cnt, err := cs.Sql.Limit(page.Limit(), page.Skip()).Where("user_id=? and site is null", id).Desc("created_at").FindAndCount(list); err != nil {
+			return err
+		} else {
+			page = page.GetPager(cnt)
+		}
 	} else {
-		page = page.GetPager(cnt)
+		if cnt, err := cs.Sql.Limit(page.Limit(), page.Skip()).Where("user_id=? and site is not null", id).Desc("created_at").FindAndCount(list); err != nil {
+			return err
+		} else {
+			page = page.GetPager(cnt)
+		}
 	}
 	for i := 0; i < len(*list); i++ {
 		library := &model.Library{}
@@ -127,6 +135,28 @@ func (t mybooks) ApplyLibrary(id int64, librarys *[]model.Library) error {
 
 		}
 		(*librarys)[i].Apply = *apply
+	}
+	return nil
+}
+func (t mybooks) Applylist(id int64, applys *[]model.ApplysVo) error {
+	if err := cs.Sql.Table("apply").Where("site is not null").Find(applys); err != nil {
+		return err
+	}
+	for i := 0; i < len(*applys); i++ {
+		library := &model.Library{}
+
+		if _, err := cs.Sql.ID((*applys)[i].LibraryId).Get(library); err != nil {
+			return err
+		}
+		(*applys)[i].Library = *library
+	}
+	return nil
+}
+
+func (t mybooks) ApplyDelete(id int64) error {
+	form := &model.Apply{}
+	if _, err := cs.Sql.Where("user_id=? and site is not null", id).Delete(form); err != nil {
+		return err
 	}
 	return nil
 }

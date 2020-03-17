@@ -42,7 +42,7 @@ func (user) List(form *model.User, page *model.Page, list *[]model.User) error {
 
 // Update 更新新的纪录
 func (user) Update(form *model.User) error {
-	if _, err := cs.Sql.Update(form, form); err != nil {
+	if _, err := cs.Sql.ID(form.ID).Update(form); err != nil {
 
 		return err
 	}

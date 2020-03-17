@@ -47,6 +47,7 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/websocket v1.4.0
 	github.com/iGoogle-ink/gopay v1.4.8
+	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/lib/pq v1.0.0
 	// github.com/makiuchi-d/gozxing v0.0.0-20190830103442-eaff64b1ceb7
 	github.com/mattn/go-isatty v0.0.8 // indirect
@@ -62,6 +63,7 @@ require (
 	github.com/xormplus/xorm v0.0.0-20181105071520-4fd8a981b629
 	go.uber.org/zap v1.10.0
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
+	golang.org/x/sync v0.0.0-20181108010431-42b317875d0f
 	golang.org/x/text v0.3.2
 	golang.org/x/xerrors v0.0.0-00010101000000-000000000000 // indirect
 	gopkg.in/flosch/pongo2.v3 v3.0.0-20141028000813-5e81b817a0c4 // indirect

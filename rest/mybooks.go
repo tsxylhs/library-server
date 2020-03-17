@@ -19,6 +19,7 @@ func (mybooks) list(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
 	page := &model.Page{}
 	if err := c.Bind(page); err != nil {
 		c.String(400, "id 参数错误")
@@ -26,7 +27,7 @@ func (mybooks) list(c *gin.Context) {
 		return
 	}
 	listbooks := &[]model.MyBook{}
-	if err := service.Mybooks.List(userId, page, listbooks); err != nil {
+	if err := service.Mybooks.List("salse", userId, page, listbooks); err != nil {
 		c.String(500, "id 参数错误")
 		c.Abort()
 		return
@@ -130,6 +131,45 @@ func (mybooks) applylibrary(c *gin.Context) {
 	r["data"] = librarys
 	c.JSON(200, r)
 }
+func (mybooks) applylist(c *gin.Context) {
+	userId, err := strconv.ParseInt(c.Query("userId"), 10, 64)
+	if err != nil {
+		c.String(400, "id 参数错误")
+		c.Abort()
+		return
+	}
+
+	page := &model.Page{}
+	if err := c.Bind(page); err != nil {
+		c.String(400, "id 参数错误")
+		c.Abort()
+		return
+	}
+	applys := &[]model.ApplysVo{}
+	if err := service.Mybooks.Applylist(userId, applys); err != nil {
+		c.String(400, "id 参数错误")
+		c.Abort()
+		return
+	}
+	r := map[string]interface{}{}
+	r["data"] = applys
+	c.JSON(200, r)
+}
+func (mybooks) deleteApply(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+
+		c.String(400, "id 参数错误")
+		c.Abort()
+		return
+	}
+	if err := service.Mybooks.ApplyDelete(id); err != nil {
+		c.String(400, "id 参数错误")
+		c.Abort()
+		return
+	}
+	c.JSON(200, "ok")
+}
 func (mybooks) Register(r *gin.RouterGroup) {
 	r.POST("/v1/mybooks/update", Mybooks.updatebook)
 	r.GET("/v1/mybooks", Mybooks.list)
@@ -138,5 +178,7 @@ func (mybooks) Register(r *gin.RouterGroup) {
 	r.DELETE("/v1/mybooks/:id", Mybooks.delete)
 	r.POST("/v1/mybooks", Mybooks.save)
 	r.POST("/v1/apply", Mybooks.applySave)
+	r.GET("/v1/apply", Mybooks.applylist)
+	r.DELETE("/v1/apply/:id", Mybooks.deleteApply)
 	r.GET("/v1/applylibrary/:id", Mybooks.applylibrary)
 }

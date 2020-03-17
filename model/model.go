@@ -24,6 +24,8 @@ type Apply struct {
 	Phone     string `json:"phone"`
 	LibraryId int64  `json:"libraryId,string"`
 	UserId    int64  `json:"userId,string"`
+	Site      string `json:"site"`
+	Time      string `json:"time"`
 }
 type MyBook struct {
 	Base       `xorm:"extends"`
@@ -90,10 +92,10 @@ type Books struct {
 }
 type Table struct {
 	Base      `xorm:"extends"`
-	Name      string
-	LibraryId int64
-	Location  string
-	Status    string
+	Name      string `json:"name"`
+	LibraryId int64  `json:"libraryId"`
+	Location  string `json:"location"`
+	Status    string `json:"status"`
 }
 
 type Cabinet struct {
